@@ -10,7 +10,6 @@ uint audio_room::room_id() const
 }
 void audio_room::join_room(audio_player::PTR player)
 {
-
     std::lock_guard<std::mutex> lck(mutex_);
     BOOST_LOG_TRIVIAL(trace)<<"join_room,player is "<<player->player_id();
 
