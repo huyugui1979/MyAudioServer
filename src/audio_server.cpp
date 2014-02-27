@@ -49,6 +49,7 @@ void audio_server::wait_timer()
             }
         }
         std::for_each(temp.begin(), temp.end(),[&](const audio_client::PTR& v){
+        	  BOOST_LOG_TRIVIAL(trace)<<"reset a player,client_id is "<<v->client_id();
 
             v->reset();
 
