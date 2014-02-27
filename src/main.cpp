@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <stdexcept>
 void my_terminate(void);
-//hello
+//dfererhello
 namespace {
 // invoke set_terminate as part of global constant initialization
 static const bool SET_TERMINATE = std::set_terminate(my_terminate);
