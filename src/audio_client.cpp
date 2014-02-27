@@ -19,14 +19,13 @@ void audio_client::setClient_ip(int client_ip)
     client_ip_ = client_ip;
 }
 
-
-
 audio_client::audio_client(tcp::socket socket)
     : socket_(std::move(socket)),
       strand_(socket_.get_io_service()),online_(true)
 {
-     BOOST_LOG_TRIVIAL(trace)<<"create audio_client socket is "<<socket_.native_handle();
-     client_ip_ = socket_.remote_endpoint().address().to_v4().to_ulong();
+	string address = socket_.remote_endpoint().address().to_v4().to_string();
+     BOOST_LOG_TRIVIAL(trace)<<"create audio_client address is  "<<address;
+    client_ip_ = socket_.remote_endpoint().address().to_v4().to_ulong();
      do_read_head();
 }
 void audio_client::send_data(char* data,size_t len)
