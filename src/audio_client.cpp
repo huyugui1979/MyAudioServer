@@ -26,7 +26,9 @@ audio_client::audio_client(tcp::socket socket)
 	string address = socket_.remote_endpoint().address().to_v4().to_string();
      BOOST_LOG_TRIVIAL(trace)<<"create audio_client address is  "<<address;
     client_ip_ = socket_.remote_endpoint().address().to_v4().to_ulong();
-     do_read_head();
+      BOOST_LOG_TRIVIAL(trace)<<"ip is   "<<client_ip_;
+    
+    do_read_head();
 }
 void audio_client::send_data(char* data,size_t len)
 {
@@ -75,6 +77,14 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
         char* sub_type = (char*) (data_ + 1);
 
         //
+        if(*main_type==1 && *sub_type==2)
+	{
+		params.push_back(UDP_HOLE);
+		params.push_back(client_id_);
+		params.push_back(*(uint*)(data_+2));
+                 
+		
+	}
         if (*main_type == 1 && *sub_type == 1) { //check server
             //
             params.push_back(CHECK_SERVER);

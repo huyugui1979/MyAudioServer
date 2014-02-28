@@ -18,7 +18,7 @@ void audio_server::get_address(const vector<boost::any>& params)
 {
     //
     uint client_id=boost::any_cast<uint>(params.at(0));
-    uint* ip = boost::any_cast<uint*>(params.at(1));
+    int* ip = boost::any_cast<int*>(params.at(1));
     auto it =this->clients_.at(client_id);
     *ip = it->client_ip();
     //

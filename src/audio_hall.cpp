@@ -210,7 +210,8 @@ void audio_hall::on_get_room_member(uint client_id)
             params.push_back(a->client_id());
             int client_ip;
             params.push_back(&client_ip);
-            //
+            f(params);
+	    //
             int client_id = a->client_id();
             short port = a->udp_port();
             memcpy(buffer+total,&client_id,4);
