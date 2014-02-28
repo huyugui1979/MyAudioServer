@@ -42,6 +42,12 @@ void audio_hall::process_player_command(const vector<boost::any>& param)
         on_get_room_list(client_id);
     }
         break;
+   case UDP_HOLE:
+{	
+        //uint player_id = any_cast<uint>(params.at(1));
+	//on_get_udp_hole(client_id,player_id);
+}
+break;
     case JOIN_ROOM:
     {
         uint client_id = any_cast<uint>(param.at(1));
@@ -68,7 +74,19 @@ void audio_hall::process_player_command(const vector<boost::any>& param)
 
     }
 }
-
+/*
+void audio_hall::on_get_udp_hole(uint client_id,uint player_id)
+{
+	auto it = find_if(players_.begin(),players_.end(),[&](const pair<uint,audio_player::PTR>& p](){
+		if(p->second->player_id() == player_id)
+			return true;
+		else 
+			return false;
+	}
+	);
+        
+	
+}*/
 void audio_hall::reset_player(const vector<boost::any>& param)
 {
     std::lock_guard<std::mutex> lck(mutex_);
@@ -212,9 +230,9 @@ void audio_hall::on_get_room_member(uint client_id)
             params.push_back(&client_ip);
             f(params);
 	    //
-            int client_id = a->client_id();
+            uint player_id= a->player_id();
             short port = a->udp_port();
-            memcpy(buffer+total,&client_id,4);
+            memcpy(buffer+total,&player_id,4);
             total=total+4;
             memcpy(buffer+total,&client_ip,4);
             total=total+4;
