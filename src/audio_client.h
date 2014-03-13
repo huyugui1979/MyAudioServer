@@ -12,7 +12,6 @@ public:
 
     explicit audio_client(tcp::socket socket);
     void send_data(char* data,size_t len);
-
     void read_head(const boost::system::error_code ec, std::size_t length);
     void read_data(const boost::system::error_code ec, std::size_t length);
     void do_read_head();

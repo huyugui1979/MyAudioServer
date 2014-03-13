@@ -12,12 +12,14 @@ public:
     audio_hall();
 
 
-    void process_player_command(const vector<boost::any>& param);
 
 protected:
+    void process_player_command(const vector<boost::any>& param);
+    void check_login_in(uint client_id);
     void reset_player(const vector<boost::any>& param);
-
-
+    void check_not_have_room(uint room_id);
+    void check_have_room(uint room_id);
+    void check_not_login_in(uint client_id);
     void on_create_room(uint client_id,uint player_id);
 
 

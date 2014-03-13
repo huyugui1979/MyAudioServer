@@ -33,7 +33,6 @@ audio_client::audio_client(tcp::socket socket)
 void audio_client::send_data(char* data,size_t len)
 {
 
-    BOOST_LOG_TRIVIAL(trace)<<"send_data len is "<<len;
     //
     auto self(shared_from_this());
     ushort s = len;
@@ -48,6 +47,8 @@ void audio_client::send_data(char* data,size_t len)
 
         }
     });
+    BOOST_LOG_TRIVIAL(trace)<<"send_data len is "<<len;
+
     //
 }
 
@@ -113,7 +114,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
         {
             params.push_back(CREATE_ROOM);
             params.push_back(client_id_);
-
+            params.push_back(*(uint*)(data_+2));
 
         }
         if (*main_type == 1 && *sub_type == 9)	//join room
@@ -177,9 +178,11 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
             //
         }
-        message_center::functions f = message_center::get_event("process_player_command");
-        f(params);
-        do_read_head();
+
+			message_center::functions f = message_center::get_event("process_player_command");
+			f(params);
+			do_read_head();
+
     }
     else
     {

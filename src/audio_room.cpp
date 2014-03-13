@@ -2,7 +2,7 @@
 
 audio_room::audio_room()
 {
-    room_id_=time(NULL);
+
 }
 uint audio_room::room_id() const
 {

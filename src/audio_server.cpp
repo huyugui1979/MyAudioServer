@@ -21,6 +21,7 @@ void audio_server::get_address(const vector<boost::any>& params)
     int* ip = boost::any_cast<int*>(params.at(1));
     auto it =this->clients_.at(client_id);
     *ip = it->client_ip();
+
     //
 }
 
@@ -89,6 +90,19 @@ void audio_server::send_data(const vector<boost::any>& params)
     size_t len=0;
     switch(event)
     {
+    case SERVER_ERROR_ECHO:
+    	*main_type=1;
+    	*sub_type=100;
+    	*(char*)(buffer+2)=(char)boost::any_cast<int>(params.at(2));
+    	len =3;
+    	break;
+    case CREATE_ROOM_ECHO:
+    	  *main_type=1;
+    	        *sub_type=8;
+    	        len=2;
+    	        BOOST_LOG_TRIVIAL(trace)<<"create room echo,client_id is "<<client_id;
+
+    	break;
     case LOGIN_ECHO:
         *main_type=1;
         *sub_type=4;
