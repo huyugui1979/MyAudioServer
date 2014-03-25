@@ -197,6 +197,10 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 			BOOST_LOG_TRIVIAL(trace)<<"timer,client_id is "<<client_id_;
 
 			//
+		}else//
+		{
+			reset();
+		    return ;
 		}
 
 		message_center::functions f = message_center::get_event("process_player_command");
@@ -224,7 +228,9 @@ void audio_client::do_read_head()
 }
 void audio_client::reset(){
 
-	socket_.close();
+	BOOST_LOG_TRIVIAL(trace)<<"reset,client_id is "<<client_id_;
+    boost::system::error_code ec;
+	socket_.close(ec);
 	reset_client_event(client_id_);
 
 }

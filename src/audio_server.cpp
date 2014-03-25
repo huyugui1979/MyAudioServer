@@ -57,7 +57,7 @@ void audio_server::wait_timer()
 		});
 		//Swap the contents of aMap and aTempMap
 
-		timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1000));
+		timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(10));
 		wait_timer();
 	});
 }
