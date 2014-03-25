@@ -20,9 +20,8 @@ public:
     uint room_id() const;
     void setRoom_id(const uint &room_id);
 
-
-    vector<audio_player::PTR> players() const;
-    void setPlayers(const vector<audio_player::PTR> &players);
+    void get_players( vector<audio_player::PTR>& players);
+    uint get_player_count();
 
 private:
     uint room_id_;

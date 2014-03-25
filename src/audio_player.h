@@ -20,11 +20,16 @@ public:
       void setRoom_id(const uint &room_id);
       short udp_port() const;
       void setUdp_port(short udp_port);
+
+
+public:
+      map<uint,bool> recv_audio_list_;
 private:
       uint player_id_;
       uint client_id_;
       uint room_id_;
-        short udp_port_;
+      short udp_port_;
+
       PLAYER_STATUS player_status_;
 };
 

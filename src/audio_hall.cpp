@@ -18,10 +18,17 @@ void audio_hall::process_player_command(const vector<boost::any>& param)
 		case CREATE_ROOM:
 		{
 
-		    uint room_id = any_cast<uint>(param.at(2));
+			uint room_id = any_cast<uint>(param.at(2));
 			this->on_create_room(client_id,room_id);
 		}
 		break;
+		case RECV_AUDIO:
+		{
+			uint player_id = any_cast<uint>(param.at(2));
+			bool recv = any_cast<bool>(param.at(3));
+			this->on_set_recv_audio(client_id,player_id,recv);
+		}
+			break;
 		case LOGIN:
 		{
 			uint player_id = any_cast<uint>(param.at(2));
@@ -78,11 +85,11 @@ void audio_hall::process_player_command(const vector<boost::any>& param)
 	{
 		//
 		message_center::functions f = message_center::get_event("send_data");
-				vector<boost::any> echo;
-				echo.push_back(SERVER_ERROR_ECHO);
-				echo.push_back(client_id);
-				echo.push_back(*get_error_info<err_no>(e));
-				f(echo);
+		vector<boost::any> echo;
+		echo.push_back(SERVER_ERROR_ECHO);
+		echo.push_back(client_id);
+		echo.push_back(*get_error_info<err_no>(e));
+		f(echo);
 		BOOST_LOG_TRIVIAL(error)<<"error_no:"<<*get_error_info<err_no>(e) \
 				<<" "<<*get_error_info<errinfo_api_function>(e) \
 				<<":"<<*get_error_info<errinfo_errno>(e);
@@ -103,53 +110,83 @@ void audio_hall::on_get_udp_hole(uint client_id,uint player_id)
 
 
 }*/
+
 void audio_hall::check_login_in(uint client_id)
 {
 	auto it =players_.find(client_id);
-    if(it == players_.end())
-    {
-    	MY_THROW(NOT_LOGIN);
-    }
+	if(it == players_.end())
+	{
+		MY_THROW(NOT_LOGIN);
+	}
 }
 void audio_hall::check_not_login_in(uint client_id)
 {
 	auto it =players_.find(client_id);
-    if(it != players_.end())
-    {
-    	MY_THROW(HAVE_LOGIN);
-    }
+	if(it != players_.end())
+	{
+		MY_THROW(HAVE_LOGIN);
+	}
 }
 void audio_hall::check_have_room(uint room_id)
 {
 	auto it1=rooms_.find(room_id);
-		if(it1 == rooms_.end())
-		{
-			MY_THROW(NO_ROOM);
-		}
+	if(it1 == rooms_.end())
+	{
+		MY_THROW(NO_ROOM);
+	}
 }
 void audio_hall::check_not_have_room(uint room_id)
 {
 	auto it1=rooms_.find(room_id);
-			if(it1 != rooms_.end())
-			{
-				MY_THROW(ROOM_HAVE_EXIST);
-			}
+	if(it1 != rooms_.end())
+	{
+		MY_THROW(ROOM_HAVE_EXIST);
+	}
+}
+void audio_hall::check_room_have_player(uint room_id)
+{
+	auto it1 = rooms_.find(room_id);
+	uint size = it1->second->get_player_count();
+	if(size >0)
+	{
+		//
+		MY_THROW(ROOM_HAVE_PLAYER);
+		//
+	}
+}
+void audio_hall::on_destroy_room(uint client_id,uint room_id)
+{
+	//
+	std::lock_guard<std::mutex> lck(mutex_);
+	check_have_room(room_id);
+	check_room_have_player(room_id);
+	rooms_.erase(room_id);
+	message_center::functions f = message_center::get_event("send_data");
+	vector<boost::any> echo;
+	echo.push_back(DESTROY_ROOM_ECHO);
+	echo.push_back(client_id);
+	f(echo);
+	//
 }
 void audio_hall::reset_player(const vector<boost::any>& param)
 {
 	std::lock_guard<std::mutex> lck(mutex_);
 	uint client_id = any_cast<uint>(param.at(0));
-	check_login_in(client_id);
+
 	auto it =players_.find(client_id);
-	if(it->second->player_status()==JOINED_ROOM)
+	if(it != players_.end())
 	{
-		//
-		   check_have_room(it->second->room_id());
-		   auto v = rooms_.find(it->second->room_id());
-		   v->second->leave_room(it->second);
-		//
+		if(it->second->player_status()==JOINED_ROOM)
+		{
+			//
+			auto v = rooms_.find(it->second->room_id());
+			if(v != rooms_.end())
+				v->second->leave_room(it->second);
+			//
+		}
+
+		players_.erase(client_id);
 	}
-	players_.erase(client_id);
 	//
 }
 
@@ -157,6 +194,7 @@ void audio_hall::on_create_room(uint client_id,uint room_id)
 {
 	//
 	std::lock_guard<std::mutex> lck(mutex_);
+	BOOST_LOG_TRIVIAL(trace)<<"create room,client_id is"<<client_id<<",room_id is "<<room_id;
 	check_login_in(client_id);
 	check_not_have_room(room_id);
 	audio_room::PTR p = std::make_shared<audio_room>();
@@ -175,7 +213,7 @@ void audio_hall::on_create_room(uint client_id,uint room_id)
 void audio_hall::on_logout_event(uint client_id)
 {
 	std::lock_guard<std::mutex> lck(mutex_);
-
+	BOOST_LOG_TRIVIAL(trace)<<"logout,client_id is"<<client_id;
 	vector<boost::any> echo;
 	check_login_in(client_id);
 	auto it =players_.find(client_id);
@@ -194,7 +232,7 @@ void audio_hall::on_logout_event(uint client_id)
 	echo.push_back(LOGOUT_ECHO);
 	echo.push_back(client_id);
 	f(echo);
-	BOOST_LOG_TRIVIAL(trace)<<"logout,client_id is"<<client_id;
+
 
 }
 
@@ -219,6 +257,32 @@ void audio_hall::on_login_event(uint client_id, uint player_id,short port)
 	BOOST_LOG_TRIVIAL(trace)<<"login,player_id is "<<player_id<<" client_id is"<<client_id;
 
 	//
+}
+void audio_hall::on_set_recv_audio(uint client_id,uint player_id,bool b)
+{
+	std::lock_guard<std::mutex> lck(mutex_);
+	BOOST_LOG_TRIVIAL(trace)<<"on set recv audio,client is"<<client_id;
+	this->check_login_in(client_id);
+
+	auto it = players_.find(client_id);
+	//
+
+	//
+	if(player_id != 0)
+	{
+		it->second->recv_audio_list_[player_id] = b;
+	}else if(player_id ==0)
+	{
+		for(auto& it1:it->second->recv_audio_list_)
+		{
+			it1.second=b;
+		}
+	}
+	message_center::functions f = message_center::get_event("send_data");
+	vector<boost::any> echo;
+	echo.push_back(RECV_AUDIO_ECHO);
+	echo.push_back(client_id);
+	f(echo);
 }
 void audio_hall::on_audio_data(uint client_id,char* data,uint len)
 {
@@ -251,8 +315,8 @@ void audio_hall::on_get_room_member(uint client_id)
 	auto it1=rooms_.find(it->second->room_id());
 	char buffer[1024];
 	bzero(buffer,1024);
-
-	vector<audio_player::PTR> players=it1->second->players();
+	vector<audio_player::PTR> players;
+	it1->second->get_players(players);
 	ushort* c = (ushort*)buffer;
 
 	int total=2;

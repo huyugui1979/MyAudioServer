@@ -17,11 +17,13 @@ protected:
     void process_player_command(const vector<boost::any>& param);
     void check_login_in(uint client_id);
     void reset_player(const vector<boost::any>& param);
+    void on_destroy_room(uint client_id,uint room_id);
     void check_not_have_room(uint room_id);
     void check_have_room(uint room_id);
     void check_not_login_in(uint client_id);
+    void check_room_have_player(uint room_id);
     void on_create_room(uint client_id,uint player_id);
-
+    void on_set_talk_list(uint client_id,vector<uint> list);
 
     void on_logout_event(uint client_id);
 
@@ -29,7 +31,7 @@ protected:
 
     void on_audio_data(uint client_id,char* data,uint len);
 
-
+    void on_set_recv_audio(uint client_id,uint player_id,bool b);
     void on_get_room_member(uint client_id);
 
 

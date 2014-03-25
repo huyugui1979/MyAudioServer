@@ -2,6 +2,7 @@
 
 audio_player::audio_player()
 {
+
 }
 uint audio_player::player_id() const
 {
