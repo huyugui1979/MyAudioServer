@@ -1,5 +1,5 @@
 #pragma once
-#define BOOST_LOG_DYN_LINK
+//#define BOOST_LOG_DYN_LINK
 #include <iostream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/log/support/date_time.hpp>
