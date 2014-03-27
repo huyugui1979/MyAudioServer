@@ -81,14 +81,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 		char* sub_type = (char*) (data_ + 1);
 
 		//
-		if(*main_type==1 && *sub_type==2)
-		{
-			params.push_back(UDP_HOLE);
-			params.push_back(client_id_);
-			params.push_back(*(uint*)(data_+2));
 
-
-		}
 		if (*main_type == 1 && *sub_type == 1) { //check server
 			//
 			params.push_back(CHECK_SERVER);
@@ -96,7 +89,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 			//
 		}
-		if (*main_type == 1 && *sub_type == 3) { //LOGIN
+		else if (*main_type == 1 && *sub_type == 3) { //LOGIN
 
 			uint* playerId = (uint*) (data_ + 2);
 			short* port =(short*)(data_+6);
@@ -106,21 +99,21 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 			params.push_back(*port);
 
 		}
-		if (*main_type == 1 && *sub_type == 5)	//logout
+		else if (*main_type == 1 && *sub_type == 5)	//logout
 		{
 			params.push_back(LOGOUT);
 			params.push_back(client_id_);
 
 		}
 
-		if (*main_type == 1 && *sub_type == 7)	//create room
+		else if (*main_type == 1 && *sub_type == 7)	//create room
 		{
 			params.push_back(CREATE_ROOM);
 			params.push_back(client_id_);
 			params.push_back(*(uint*)(data_+2));
 
 		}
-		if (*main_type == 1 && *sub_type ==25)	//destroy room
+		else if (*main_type == 1 && *sub_type ==25)	//destroy room
 		{
 			params.push_back(DESTROY_ROOM);
 			params.push_back(client_id_);
@@ -128,7 +121,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 		}
 
-		if (*main_type == 1 && *sub_type ==27)	//set whether recv audio
+		else if (*main_type == 1 && *sub_type ==27)	//set whether recv audio
 		{
 			params.push_back(RECV_AUDIO);
 			params.push_back(client_id_);
@@ -137,7 +130,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 		}
 
-		if (*main_type == 1 && *sub_type == 9)	//join room
+		else if (*main_type == 1 && *sub_type == 9)	//join room
 		{
 			//
 			int* roomId = (int*) (data_ + 2);
@@ -147,7 +140,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 
 		}
-		if (*main_type == 1 && *sub_type == 11)	//leave room
+		else if (*main_type == 1 && *sub_type == 11)	//leave room
 		{
 			//
 			int* roomId = (int*) (data_ + 2);
@@ -158,7 +151,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 			//
 		}
-		if (*main_type == 1 && *sub_type == 13)            //get memeber
+		else if (*main_type == 1 && *sub_type == 13)            //get memeber
 		{
 			//
 			int* roomId = (int*) (data_ + 2);
@@ -169,7 +162,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 			//
 
 		}
-		if (*main_type == 1 && *sub_type == 15)            //get room's  list
+		else if (*main_type == 1 && *sub_type == 15)            //get room's  list
 		{
 			//
 			params.push_back(GET_ROOM_LIST);
@@ -179,7 +172,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 			//
 		}
-		if (*main_type == 1 && *sub_type == 17) {		//audio data
+		else if (*main_type == 1 && *sub_type == 17) {		//audio data
 			//
 			params.push_back(AUDIO_DATA);
 			params.push_back(client_id_);
@@ -189,7 +182,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 
 			//
 		}
-		if (*main_type == 1 && *sub_type == 99) {			//timer
+		else if (*main_type == 1 && *sub_type == 99) {			//timer
 			//
 			online_=true;
 			params.push_back(TIMER);
