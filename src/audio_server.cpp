@@ -153,6 +153,7 @@ void audio_server::send_data(const vector<boost::any>& params)
 	{
 		*main_type=1;
 		*sub_type=28;
+		len=2
 		BOOST_LOG_TRIVIAL(trace)<<"recv audio echo,client_id is "<<client_id;
 	}
 	break;
