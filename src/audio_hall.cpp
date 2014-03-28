@@ -1,11 +1,35 @@
 #include "audio_hall.h"
 
-audio_hall::audio_hall()
+audio_hall::audio_hall(boost::asio::io_service& io):io_(io),scan_room_timer_(io,boost::posix_time::seconds(0))
 {
 	message_center::add_event("process_player_command",std::bind(&audio_hall::process_player_command,this,std::placeholders::_1));
 	message_center::add_event("reset_player",std::bind(&audio_hall::reset_player,this,std::placeholders::_1));
+	wait_scan_room_timer();
 }
+void audio_hall::wait_scan_room_timer()
+{
+	scan_room_timer_.async_wait([&](const boost::system::error_code& c){
+		//
 
+		vector<uint> remove_rooms;
+		for(auto c:rooms_)
+		{
+			if(c.second->is_idle())
+			{
+				remove_rooms.push_back(c.first);
+			}
+		}
+		{
+			std::lock_guard<std::mutex> lck(mutex_);
+			for(auto c:remove_rooms)
+			{
+				rooms_.erase(c);
+			}
+		}
+		scan_room_timer_.expires_at(scan_room_timer_.expires_at() + boost::posix_time::seconds(10));
+		wait_scan_room_timer();
+	});
+}
 
 void audio_hall::process_player_command(const vector<boost::any>& param)
 {
@@ -28,7 +52,7 @@ void audio_hall::process_player_command(const vector<boost::any>& param)
 			bool recv = any_cast<bool>(param.at(3));
 			this->on_set_recv_audio(client_id,player_id,recv);
 		}
-			break;
+		break;
 		case LOGIN:
 		{
 			uint player_id = any_cast<uint>(param.at(2));

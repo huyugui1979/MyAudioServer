@@ -76,11 +76,11 @@ int main(int argc, char *argv[])
 
     BOOST_LOG_TRIVIAL(trace)<<"app begin";
    // BOOST_LOG_SEV(g_logger,Log_Info)<<"helo";
-    boost::asio::io_service io_service;
-    audio_server server(io_service,9009);
-    audio_hall hall;
+    boost::asio::io_service io;
+    audio_server server(io,9009);
+    audio_hall hall(io);
 
-    io_service.run();
+    io.run();
 //    std::vector<std::shared_ptr<std::thread> > threads;
 //    for (std::size_t i = 0; i < 2; ++i)
 //    {

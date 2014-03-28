@@ -2,14 +2,16 @@
 audio_server::audio_server(boost::asio::io_service& io_service, short port)
 : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
   socket_(io_service),
-  timer_(io_service,boost::posix_time::seconds(0))
+  scan_player_timer_(io_service,boost::posix_time::seconds(0))
+
 {
 	//
 	acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
 	message_center::add_event("send_data",std::bind(&audio_server::send_data,this,std::placeholders::_1));
 	message_center::add_event("get_address",std::bind(&audio_server::get_address,this,std::placeholders::_1));
 
-	wait_timer();
+	wait_scan_player_timer();
+
 	do_accept();
 
 	//
@@ -25,9 +27,9 @@ void audio_server::get_address(const vector<boost::any>& params)
 	//
 }
 
-void audio_server::wait_timer()
+void audio_server::wait_scan_player_timer()
 {
-	timer_.async_wait([&](const boost::system::error_code& c){
+	scan_player_timer_.async_wait([&](const boost::system::error_code& c){
 		vector<audio_client::PTR> temp;
 		{
 			std::lock_guard<std::mutex> lck(mutex_);
@@ -57,8 +59,8 @@ void audio_server::wait_timer()
 		});
 		//Swap the contents of aMap and aTempMap
 
-		timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1000));
-		wait_timer();
+		scan_player_timer_.expires_at(scan_player_timer_.expires_at() + boost::posix_time::seconds(10));
+		wait_scan_player_timer();
 	});
 }
 void audio_server::on_client_reset(uint client_id)

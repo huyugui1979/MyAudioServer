@@ -23,10 +23,15 @@ public:
     void get_players( vector<audio_player::PTR>& players);
     uint get_player_count();
 
+	bool is_idle() const {
+		return idle_;
+	}
+
 private:
     uint room_id_;
     vector<audio_player::PTR> players_;
     std::mutex mutex_;
+    bool idle_=true;
 };
 
 #endif // AUDIO_ROOM_H

@@ -21,7 +21,8 @@ void audio_room::join_room(audio_player::PTR player)
 	players_.push_back(player);
 	player->setPlayer_status(JOINED_ROOM);
 	player->setRoom_id(room_id_);
-
+    //
+	idle_= false;
 
 	//
 	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
@@ -109,6 +110,11 @@ void audio_room::leave_room(audio_player::PTR player)
 			f(echo);
 		}
 	});
+	if(players_.size()==0)
+	{
+		idle_=true;
+	}
+
 
 }
 void audio_room::setRoom_id(const uint &room_id)

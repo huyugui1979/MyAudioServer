@@ -9,7 +9,7 @@ class audio_hall:public std::enable_shared_from_this<audio_hall>
 {
 public:
 
-    audio_hall();
+    audio_hall(boost::asio::io_service& io);
 
 
 
@@ -17,6 +17,7 @@ protected:
     void process_player_command(const vector<boost::any>& param);
     void check_login_in(uint client_id);
     void reset_player(const vector<boost::any>& param);
+    void scan_room();
     void on_destroy_room(uint client_id,uint room_id);
     void check_not_have_room(uint room_id);
     void check_have_room(uint room_id);
@@ -40,12 +41,14 @@ protected:
     void on_join_room_event(uint client_id,uint room_id);
 
     void on_leave_room_event(uint client_id,uint room_id);
-
+    void wait_scan_room_timer();
 
 private:
     map<uint,audio_player::PTR>  players_;
     map<uint,audio_room::PTR> rooms_;
     std::mutex mutex_;
+    boost::asio::io_service& io_;
+    boost::asio::deadline_timer scan_room_timer_;
 };
 
 #endif // AUDIO_HALL_H

@@ -13,8 +13,8 @@ public:
     audio_server(boost::asio::io_service& io_service, short port);
 
 protected:
-    void wait_timer();
-
+    void wait_scan_player_timer();
+    void wait_scan_room_timer();
     void on_client_reset(uint client_id);
 
 
@@ -26,7 +26,8 @@ private:
     map<uint,audio_client::PTR > clients_;
     tcp::acceptor acceptor_;
     tcp::socket socket_;
-    boost::asio::deadline_timer timer_;
+    boost::asio::deadline_timer scan_player_timer_;
+
     std::mutex mutex_;
 };
 
