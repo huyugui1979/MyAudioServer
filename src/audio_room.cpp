@@ -28,8 +28,8 @@ void audio_room::join_room(audio_player::PTR player)
 	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
 		if(v->player_id() != player->player_id())
 		{
-			player->recv_audio_list_[v->player_id()]=false;
-			v->recv_audio_list_[player->player_id()]=false;
+			player->recv_audio_list_[v->player_id()]=true;
+			v->recv_audio_list_[player->player_id()]=true;
 			vector<boost::any> echo;
 			message_center::functions f = message_center::get_event("send_data");
 			echo.push_back(MEMBER_JOIN_ROOM_ECHO);
@@ -95,10 +95,14 @@ void audio_room::leave_room(audio_player::PTR player)
 	players_.erase(it);
 	player->setPlayer_status(LOGIN_HALL);
 	player->setRoom_id(0);
+	player->recv_audio_list_.clear();
+	//
+
 	//
 	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
 		if(v->player_id() != player->player_id())
 		{
+
 			v->recv_audio_list_.erase(player->player_id());
 			message_center::functions f = message_center::get_event("send_data");
 			vector<boost::any> echo;
