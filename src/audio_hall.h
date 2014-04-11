@@ -34,7 +34,8 @@ protected:
 
     void on_set_recv_audio(uint client_id,uint player_id,bool b);
     void on_get_room_member(uint client_id);
-
+    void on_begin_talk(uint client_id);
+    void on_stop_talk(uint client_id);
 
     void on_get_room_list(uint client_id);
 

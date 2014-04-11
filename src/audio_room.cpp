@@ -81,6 +81,41 @@ uint audio_room::get_player_count(){
 	std::lock_guard<std::mutex> lck(mutex_);
 	return players_.size();
 }
+void audio_room::stop_talk(audio_player::PTR player)
+{
+	std::lock_guard<std::mutex> lck(mutex_);
+	BOOST_LOG_TRIVIAL(trace)<<"stop_talk,player is "<<player->player_id();
+	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
+			if(v->player_id() != player->player_id())
+			{
+
+				message_center::functions f = message_center::get_event("send_data");
+				vector<boost::any> echo;
+				echo.push_back(STOP_TALK_ECHO);
+				echo.push_back(v->client_id());
+				echo.push_back(player->player_id());
+				echo.push_back(room_id_);
+				f(echo);
+			}
+	});
+}
+ void audio_room::begin_talk(audio_player::PTR player)
+ {
+	 std::lock_guard<std::mutex> lck(mutex_);
+	 	BOOST_LOG_TRIVIAL(trace)<<"begin,player is "<<player->player_id();
+	 	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
+	 			if(v->player_id() != player->player_id())
+	 			{
+
+	 				message_center::functions f = message_center::get_event("send_data");
+	 				vector<boost::any> echo;
+	 				echo.push_back(BEGIN_TALK_ECHO);
+	 				echo.push_back(v->client_id());
+	 				echo.push_back(player->player_id());
+	 				f(echo);
+	 			}
+	 	});
+ }
 void audio_room::leave_room(audio_player::PTR player)
 {
 	std::lock_guard<std::mutex> lck(mutex_);

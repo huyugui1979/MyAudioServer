@@ -72,6 +72,16 @@ void audio_hall::process_player_command(const vector<boost::any>& param)
 			on_get_room_member(client_id);
 		}
 		break;
+		case BEGIN_TALK:
+		{
+			on_begin_talk(client_id);
+		}
+		break;
+		case STOP_TALK:
+		{
+			on_stop_talk(client_id);
+		}
+		break;
 		case GET_ROOM_LIST:
 		{
 			on_get_room_list(client_id);
@@ -143,6 +153,7 @@ void audio_hall::check_login_in(uint client_id)
 		MY_THROW(NOT_LOGIN);
 	}
 }
+
 void audio_hall::check_not_login_in(uint client_id)
 {
 	auto it =players_.find(client_id);
@@ -307,6 +318,31 @@ void audio_hall::on_set_recv_audio(uint client_id,uint player_id,bool b)
 	echo.push_back(RECV_AUDIO_ECHO);
 	echo.push_back(client_id);
 	f(echo);
+}
+void audio_hall::on_begin_talk(uint client_id)
+{
+	std::lock_guard<std::mutex> lck(mutex_);
+	BOOST_LOG_TRIVIAL(trace)<<"begin talk,client_id is"<<client_id;
+		check_login_in(client_id);
+		auto it =players_.find(client_id);
+		check_have_room(it->second->room_id());
+		auto it1=rooms_.find(it->second->room_id());
+		it1->second->begin_talk(it->second);
+}
+void audio_hall::on_stop_talk(uint client_id)
+{
+	std::lock_guard<std::mutex> lck(mutex_);
+
+	BOOST_LOG_TRIVIAL(trace)<<"stop talk,client_id is"<<client_id;
+	check_login_in(client_id);
+	auto it =players_.find(client_id);
+	check_have_room(it->second->room_id());
+	auto it1=rooms_.find(it->second->room_id());
+	it1->second->stop_talk(it->second);
+	//
+	//
+
+
 }
 void audio_hall::on_audio_data(uint client_id,char* data,uint len)
 {

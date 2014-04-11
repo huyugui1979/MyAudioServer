@@ -13,7 +13,8 @@ public:
     void join_room(audio_player::PTR player);
 
     void send_data_room(audio_player::PTR player,char* data,uint len);
-
+    void stop_talk(audio_player::PTR player);
+    void begin_talk(audio_player::PTR player);
 
     void leave_room(audio_player::PTR player);
 

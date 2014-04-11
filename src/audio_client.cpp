@@ -120,7 +120,18 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 			params.push_back(*(uint*)(data_+2));
 
 		}
-
+		else if(*main_type == 1 && *sub_type ==29)
+		{
+			//
+			params.push_back(BEGIN_TALK);
+						params.push_back(client_id_);
+			//
+		}else if(*main_type == 1 && *sub_type ==31)
+		{
+			//
+			params.push_back(STOP_TALK);
+			params.push_back(client_id_);
+		}
 		else if (*main_type == 1 && *sub_type ==27)	//set whether recv audio
 		{
 			params.push_back(RECV_AUDIO);
