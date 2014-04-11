@@ -150,9 +150,26 @@ void audio_server::send_data(const vector<boost::any>& params)
 
 	}
 	break;
+	case MEMBER_BEGIN_TALK_ECHO:
+		{
+			*main_type=1;
+			*sub_type=30;
+
+			len=2;
+			BOOST_LOG_TRIVIAL(trace)<<"begin talk echo,client_id is "<<client_id;
+		}break;
+		case MEMBER_STOP_TALK_ECHO:
+		{
+			*main_type=1;
+			*sub_type=32;
+
+			len=2;
+			BOOST_LOG_TRIVIAL(trace)<<"stop talk echo,client_id is "<<client_id;
+		}
+		break;
 	case BEGIN_TALK_ECHO:
 	{
-		*main_type=1;
+		*main_type=2;
 		*sub_type=30;
 		uint player_id = boost::any_cast<uint>(params.at(2));
 		*(uint*)(buffer+2)=player_id;
@@ -161,7 +178,7 @@ void audio_server::send_data(const vector<boost::any>& params)
 	}break;
 	case STOP_TALK_ECHO:
 	{
-		*main_type=1;
+		*main_type=2;
 		*sub_type=32;
 		uint player_id = boost::any_cast<uint>(params.at(2));
 		*(uint*)(buffer+2)=player_id;

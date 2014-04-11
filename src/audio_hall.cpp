@@ -323,11 +323,16 @@ void audio_hall::on_begin_talk(uint client_id)
 {
 	std::lock_guard<std::mutex> lck(mutex_);
 	BOOST_LOG_TRIVIAL(trace)<<"begin talk,client_id is"<<client_id;
-		check_login_in(client_id);
-		auto it =players_.find(client_id);
-		check_have_room(it->second->room_id());
-		auto it1=rooms_.find(it->second->room_id());
-		it1->second->begin_talk(it->second);
+	check_login_in(client_id);
+	auto it =players_.find(client_id);
+	check_have_room(it->second->room_id());
+	auto it1=rooms_.find(it->second->room_id());
+	it1->second->begin_talk(it->second);
+	message_center::functions f = message_center::get_event("send_data");
+	vector<boost::any> echo;
+	echo.push_back(MEMBER_BEGIN_TALK_ECHO);
+	echo.push_back(client_id);
+	f(echo);
 }
 void audio_hall::on_stop_talk(uint client_id)
 {
@@ -339,6 +344,11 @@ void audio_hall::on_stop_talk(uint client_id)
 	check_have_room(it->second->room_id());
 	auto it1=rooms_.find(it->second->room_id());
 	it1->second->stop_talk(it->second);
+	message_center::functions f = message_center::get_event("send_data");
+	vector<boost::any> echo;
+		echo.push_back(MEMBER_STOP_TALK_ECHO);
+		echo.push_back(client_id);
+		f(echo);
 	//
 	//
 
