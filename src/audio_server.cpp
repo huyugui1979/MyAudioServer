@@ -156,7 +156,7 @@ void audio_server::send_data(const vector<boost::any>& params)
 			*sub_type=30;
 
 			len=2;
-			BOOST_LOG_TRIVIAL(trace)<<"begin talk echo,client_id is "<<client_id;
+			BOOST_LOG_TRIVIAL(trace)<<"member begin talk echo,client_id is "<<client_id;
 		}break;
 		case MEMBER_STOP_TALK_ECHO:
 		{
@@ -164,7 +164,7 @@ void audio_server::send_data(const vector<boost::any>& params)
 			*sub_type=32;
 
 			len=2;
-			BOOST_LOG_TRIVIAL(trace)<<"stop talk echo,client_id is "<<client_id;
+			BOOST_LOG_TRIVIAL(trace)<<"member stop talk echo,client_id is "<<client_id;
 		}
 		break;
 	case BEGIN_TALK_ECHO:
