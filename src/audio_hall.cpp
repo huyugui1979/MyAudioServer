@@ -14,9 +14,17 @@ void audio_hall::wait_scan_room_timer()
 		vector<uint> remove_rooms;
 		for(auto c:rooms_)
 		{
-			if(c.second->is_idle())
+			if(c.second->get_player_count()==0)
 			{
-				remove_rooms.push_back(c.first);
+				int idle_count = c.second->get_idle_count();
+				c.second->set_idle_count(idle_count++);
+				if(idle_count>60)
+				{
+					remove_rooms.push_back(c.first);
+				}
+			}else
+			{
+				c.second->set_idle_count(0);
 			}
 		}
 		{
@@ -26,7 +34,7 @@ void audio_hall::wait_scan_room_timer()
 				rooms_.erase(c);
 			}
 		}
-		scan_room_timer_.expires_at(scan_room_timer_.expires_at() + boost::posix_time::seconds(10));
+		scan_room_timer_.expires_at(scan_room_timer_.expires_at() + boost::posix_time::seconds(1));
 		wait_scan_room_timer();
 	});
 }
