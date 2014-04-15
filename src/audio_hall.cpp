@@ -17,7 +17,7 @@ void audio_hall::wait_scan_room_timer()
 			if(c.second->get_player_count()==0)
 			{
 				int idle_count = c.second->get_idle_count();
-				c.second->set_idle_count(idle_count++);
+				c.second->set_idle_count(++idle_count);
 				if(idle_count>60)
 				{
 					remove_rooms.push_back(c.first);
@@ -32,6 +32,7 @@ void audio_hall::wait_scan_room_timer()
 			for(auto c:remove_rooms)
 			{
 				rooms_.erase(c);
+				//BOOST_LOG_TRIVIAL(trace)<<"room "<<c.second->
 			}
 		}
 		scan_room_timer_.expires_at(scan_room_timer_.expires_at() + boost::posix_time::seconds(1));
