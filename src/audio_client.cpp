@@ -33,8 +33,6 @@ audio_client::audio_client(tcp::socket socket)
 void audio_client::send_data(char* data,size_t len)
 {
 
-	//
-	auto self(shared_from_this());
 	ushort s = len;
 	char buffer[1024];
 	*(ushort*)(buffer)=s;

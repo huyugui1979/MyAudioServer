@@ -10,9 +10,6 @@ class audio_hall:public std::enable_shared_from_this<audio_hall>
 public:
 
     audio_hall(boost::asio::io_service& io);
-
-
-
 protected:
     void process_player_command(const vector<boost::any>& param);
     void check_login_in(uint client_id);
