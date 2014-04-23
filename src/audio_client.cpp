@@ -34,7 +34,11 @@ void audio_client::send_data(char* data,size_t len)
 {
 
     if(client_id_ ==-1)
+    {
+    	BOOST_LOG_TRIVIAL(trace)<<"have reset,give up";
+
     	return ;
+    }
 	ushort s = len;
 	char buffer[1024];
 	*(ushort*)(buffer)=s;
