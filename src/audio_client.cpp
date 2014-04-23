@@ -33,6 +33,8 @@ audio_client::audio_client(tcp::socket socket)
 void audio_client::send_data(char* data,size_t len)
 {
 
+    if(client_id_ ==-1)
+    	return ;
 	ushort s = len;
 	char buffer[1024];
 	*(ushort*)(buffer)=s;
@@ -233,6 +235,8 @@ void audio_client::reset(){
 	BOOST_LOG_TRIVIAL(trace)<<"reset,client_id is "<<client_id_;
     boost::system::error_code ec;
 	socket_.close(ec);
+
 	reset_client_event(client_id_);
+	client_id_=-1;
 
 }

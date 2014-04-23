@@ -31,8 +31,9 @@ void audio_hall::wait_scan_room_timer()
 			std::lock_guard<std::mutex> lck(mutex_);
 			for(auto c:remove_rooms)
 			{
+				BOOST_LOG_TRIVIAL(trace)<<"erase room roomId is  "<<rooms_.at(c)->room_id();
 				rooms_.erase(c);
-				//BOOST_LOG_TRIVIAL(trace)<<"room "<<c.second->
+
 			}
 		}
 		scan_room_timer_.expires_at(scan_room_timer_.expires_at() + boost::posix_time::seconds(1));
