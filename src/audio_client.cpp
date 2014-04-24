@@ -35,7 +35,7 @@ void audio_client::send_data(char* data,size_t len)
 
     if(client_id_ ==-1)
     {
-    	BOOST_LOG_TRIVIAL(trace)<<"have reset,give up";
+    	BOOST_LOG_TRIVIAL(trace)<<"have reset,give up"<<" client_id is "<<client_id_;;
 
     	return ;
     }
@@ -51,7 +51,7 @@ void audio_client::send_data(char* data,size_t len)
 
 		}
 			});
-	BOOST_LOG_TRIVIAL(trace)<<"send_data len is "<<len;
+	BOOST_LOG_TRIVIAL(trace)<<"send_data len is "<<len<<" client_id is "<<client_id_;
 
 	//
 }
@@ -59,7 +59,7 @@ void audio_client::send_data(char* data,size_t len)
 void audio_client::read_head(const boost::system::error_code ec, std::size_t length)
 {
 
-	BOOST_LOG_TRIVIAL(trace)<<"read_head,len is "<<len_;
+	BOOST_LOG_TRIVIAL(trace)<<"read_head,len is "<<len_c
 	memset(data_,0,1024);
 	if(!ec)
 	{
@@ -67,16 +67,17 @@ void audio_client::read_head(const boost::system::error_code ec, std::size_t len
 				std::bind(&audio_client::read_data,this,std::placeholders::_1,std::placeholders::_2));
 	}else
 	{
+		BOOST_LOG_TRIVIAL(error)<<"socket error "<<ec.message()<<" client_id is "<<client_id_;;
 		if(ec.value() !=boost::asio::error::operation_aborted )
 		{
-			BOOST_LOG_TRIVIAL(error)<<"socket error "<<ec.message();
+
 			reset();
 		}
 	}
 }
 void audio_client::read_data(const boost::system::error_code ec, std::size_t length)
 {
-	BOOST_LOG_TRIVIAL(trace)<<"read_data,len is %d"<<length;
+	BOOST_LOG_TRIVIAL(trace)<<"read_data,len is %d"<<length<<" client_id is "<<client_id_;;
 	vector<boost::any> params;
 	if (!ec)
 	{
@@ -218,10 +219,9 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 	}
 	else
 	{
-		//
+		BOOST_LOG_TRIVIAL(error)<<"socket error "<<ec.message()<<" client_id is "<<client_id_;;
 		if(ec.value() != boost::asio::error::operation_aborted)
 		{
-			BOOST_LOG_TRIVIAL(error)<<"socket error "<<ec.message();
 			reset();
 		}
 	}
