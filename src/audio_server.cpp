@@ -264,7 +264,7 @@ void audio_server::do_accept()
 			{
 				std::lock_guard<std::mutex> lck(mutex_);
 				audio_client::PTR c= std::make_shared<audio_client>(std::move(socket_));
-				c->setClient_id(time(NULL));
+				c->setClient_id(client_index_++);
 				c->reset_client_event.connect(std::bind(&audio_server::on_client_reset,this,std::placeholders::_1));
 				clients_[c->client_id()]=c;
 				BOOST_LOG_TRIVIAL(trace)<<"client have accept ,client_id is "<<c->client_id();

@@ -27,7 +27,7 @@ private:
     tcp::acceptor acceptor_;
     tcp::socket socket_;
     boost::asio::deadline_timer scan_player_timer_;
-
+    uint client_index_=0;
     std::mutex mutex_;
 };
 
