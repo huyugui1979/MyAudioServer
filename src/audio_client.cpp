@@ -238,6 +238,7 @@ void audio_client::reset(){
 
 	BOOST_LOG_TRIVIAL(trace)<<"reset,client_id is "<<client_id_;
     boost::system::error_code ec;
+    socket_.cancel(ec);
 	socket_.close(ec);
 
 	reset_client_event(client_id_);

@@ -216,7 +216,11 @@ void audio_hall::on_destroy_room(uint client_id,uint room_id)
 void audio_hall::reset_player(const vector<boost::any>& param)
 {
 	std::lock_guard<std::mutex> lck(mutex_);
+	//
+
+	//
 	uint client_id = any_cast<uint>(param.at(0));
+	BOOST_LOG_TRIVIAL(trace)<<"reset player,client_id is"<<client_id;
 
 	auto it =players_.find(client_id);
 	if(it != players_.end())
