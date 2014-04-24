@@ -59,7 +59,7 @@ void audio_client::send_data(char* data,size_t len)
 void audio_client::read_head(const boost::system::error_code ec, std::size_t length)
 {
 
-	BOOST_LOG_TRIVIAL(trace)<<"read_head,len is "<<len_c
+	BOOST_LOG_TRIVIAL(trace)<<"read_head,len is "<<length<<" client_id is "<<client_id_;
 	memset(data_,0,1024);
 	if(!ec)
 	{
