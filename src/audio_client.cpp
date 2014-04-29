@@ -59,10 +59,11 @@ void audio_client::send_data(char* data,size_t len)
 void audio_client::read_head(const boost::system::error_code ec, std::size_t length)
 {
 
-	BOOST_LOG_TRIVIAL(trace)<<"read_head,len is "<<length<<" client_id is "<<client_id_;
-	memset(data_,0,1024);
+
 	if(!ec)
 	{
+		BOOST_LOG_TRIVIAL(trace)<<"read_head,len is "<<length<<" client_id is "<<client_id_;
+			memset(data_,0,1024);
 		boost::asio::async_read(socket_,boost::asio::buffer(data_, len_),
 				std::bind(&audio_client::read_data,this,std::placeholders::_1,std::placeholders::_2));
 	}else
@@ -77,11 +78,11 @@ void audio_client::read_head(const boost::system::error_code ec, std::size_t len
 }
 void audio_client::read_data(const boost::system::error_code ec, std::size_t length)
 {
-	BOOST_LOG_TRIVIAL(trace)<<"read_data,len is %d"<<length<<" client_id is "<<client_id_;;
-	vector<boost::any> params;
+
 	if (!ec)
 	{
-
+		BOOST_LOG_TRIVIAL(trace)<<"read_data,len is %d"<<length<<" client_id is "<<client_id_;;
+			vector<boost::any> params;
 		char* main_type = (char*) data_;
 		char* sub_type = (char*) (data_ + 1);
 
