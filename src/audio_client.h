@@ -20,15 +20,15 @@ public:
 
     uint client_id() const;
     void setClient_id(const uint &client_id);
-    bool online(){return online_;}
-    void setOnline(const bool& online){online_=online;}
+   // bool online(){return online_;}
+   // void setOnline(const bool& online){online_=online;}
     int client_ip() const;
     void setClient_ip(int client_ip);
 
 
     boost::asio::ip::tcp::socket socket_;
     uint client_id_;
-    int online_;
+    int online_count_;
     ushort len_;
     char data_[1024];
 

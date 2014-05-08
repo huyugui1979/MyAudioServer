@@ -21,7 +21,7 @@ void audio_client::setClient_ip(int client_ip)
 
 audio_client::audio_client(tcp::socket socket)
 : socket_(std::move(socket)),
-  strand_(socket_.get_io_service()),online_(true)
+  strand_(socket_.get_io_service()),online_count_(0)
 {
 	string address = socket_.remote_endpoint().address().to_v4().to_string();
 	BOOST_LOG_TRIVIAL(trace)<<"create audio_client address is  "<<address;
@@ -201,7 +201,7 @@ void audio_client::read_data(const boost::system::error_code ec, std::size_t len
 		}
 		else if (*main_type == 1 && *sub_type == 99) {			//timer
 			//
-			online_=true;
+			online_count_=0;
 			params.push_back(TIMER);
 			params.push_back(client_id_);
 			BOOST_LOG_TRIVIAL(trace)<<"timer,client_id is "<<client_id_;

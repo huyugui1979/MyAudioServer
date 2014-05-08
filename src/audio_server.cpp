@@ -37,16 +37,14 @@ void audio_server::wait_scan_player_timer()
 
 			for(auto it = clients_.begin(), ite = clients_.end(); it != ite;)
 			{
-				if(it->second->online() == false)
+				if(it->second->online_count_ >180)
 				{
 					temp.push_back(it->second);
 					it = clients_.erase(it);
-
-
 				}
 				else
 				{
-					it->second->setOnline(false);
+					it->second->online_count_++;
 					++it;
 				}
 			}
@@ -59,7 +57,7 @@ void audio_server::wait_scan_player_timer()
 		});
 		//Swap the contents of aMap and aTempMap
 
-		scan_player_timer_.expires_at(scan_player_timer_.expires_at() + boost::posix_time::seconds(10));
+		scan_player_timer_.expires_at(scan_player_timer_.expires_at() + boost::posix_time::seconds(1));
 		wait_scan_player_timer();
 	});
 }
