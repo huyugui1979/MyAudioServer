@@ -245,11 +245,13 @@ void audio_hall::on_create_room(uint client_id,uint room_id)
 	std::lock_guard<std::mutex> lck(mutex_);
 	BOOST_LOG_TRIVIAL(trace)<<"create room,client_id is"<<client_id<<",room_id is "<<room_id;
 	check_login_in(client_id);
-	check_not_have_room(room_id);
-	audio_room::PTR p = std::make_shared<audio_room>();
-	p->setRoom_id(room_id);
-	rooms_[p->room_id()]=p;
 
+	check_not_have_room(room_id);
+	audio_room::PTR r = std::make_shared<audio_room>();
+	r->setRoom_id(room_id);
+	rooms_[r->room_id()]=r;
+	audio_player::PTR p = players_.at(client_id);
+	r->join_room(p);
 	//
 	message_center::functions f = message_center::get_event("send_data");
 	vector<boost::any> echo;
