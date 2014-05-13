@@ -18,7 +18,7 @@ void audio_hall::wait_scan_room_timer()
 			{
 				int idle_count = c.second->get_idle_count();
 				c.second->set_idle_count(++idle_count);
-				if(idle_count>60)
+				if(idle_count>3)
 				{
 					remove_rooms.push_back(c.first);
 				}
