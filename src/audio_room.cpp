@@ -85,7 +85,7 @@ void audio_room::stop_talk(audio_player::PTR player)
 	std::lock_guard<std::mutex> lck(mutex_);
 	BOOST_LOG_TRIVIAL(trace)<<"stop_talk,player is "<<player->player_id();
 	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
-			if(v->player_id() != player->player_id())
+			if(v->player_id() != player->player_id() && player->recv_audio_list_[v->player_id()] == true)
 			{
 
 				message_center::functions f = message_center::get_event("send_data");
@@ -103,7 +103,7 @@ void audio_room::stop_talk(audio_player::PTR player)
 	 std::lock_guard<std::mutex> lck(mutex_);
 	 	BOOST_LOG_TRIVIAL(trace)<<"begin,player is "<<player->player_id();
 	 	for_each(players_.begin(),players_.end(),[&](const audio_player::PTR& v){
-	 			if(v->player_id() != player->player_id())
+	 			if(v->player_id() != player->player_id() &&  player->recv_audio_list_[v->player_id()] == true)
 	 			{
 
 	 				message_center::functions f = message_center::get_event("send_data");
