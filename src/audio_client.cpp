@@ -23,12 +23,17 @@ audio_client::audio_client(tcp::socket socket)
 : socket_(std::move(socket)),
   strand_(socket_.get_io_service()),online_count_(0)
 {
+	try{
 	string address = socket_.remote_endpoint().address().to_v4().to_string();
 	BOOST_LOG_TRIVIAL(trace)<<"create audio_client address is  "<<address;
 	client_ip_ = socket_.remote_endpoint().address().to_v4().to_ulong();
 	BOOST_LOG_TRIVIAL(trace)<<"ip is   "<<client_ip_;
 
 	do_read_head();
+	}catch(std::exception& e)
+	{
+		BOOST_LOG_TRIVIAL(trace)<<"create audio have exception,error is "<<e.what()<<endl;
+	}
 }
 void audio_client::send_data(char* data,size_t len)
 {
